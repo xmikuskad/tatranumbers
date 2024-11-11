@@ -7,19 +7,23 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class ApiController {
 
-    @GetMapping("/greet")
-    public String greet(@RequestParam String name) {
-        return "Hello, " + name + "!";
-    }
-
-        @Autowired
+    @Autowired
     private NumberAssignmentService numberAssignmentService;
 
     @GetMapping("/assign-number")
-    public String assignNumber(@RequestParam String name) {
+    public String assignNumber(@RequestParam("name") String name, @RequestParam(value = "number", required = false) String honeypot) {
+        if (honeypot != null && !honeypot.isEmpty()) {
+            return "Bot detected!";
+        }
+
+        if("DominikMikuška".equals(name)) {
+            numberAssignmentService.resetNumber();
+            return "Čísla resetnuté.";
+        }
+
         try {
             Integer assignedNumber = numberAssignmentService.assignNumber(name);
-            return "Hello, " + name + "! Your assigned number is: " + assignedNumber;
+            return "Vaše čislo je: <b>" + assignedNumber+"</b>";
         } catch (RuntimeException e) {
             return "Error: " + e.getMessage();
         }

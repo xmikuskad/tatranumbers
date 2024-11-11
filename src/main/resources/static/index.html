@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sk">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Responsive Greeting Page</title>
+    <title>IT konferencia 2024</title>
     <style>
       /* Basic reset */
       * {
@@ -83,6 +83,11 @@
         color: #333;
       }
 
+      /* Result message styling */
+      #numberInput {
+        display: none;
+      }
+
       /* Responsive adjustments */
       @media (max-width: 480px) {
         h1 {
@@ -108,7 +113,7 @@
             `/api/assign-number?name=${encodeURIComponent(name)}`
           );
           const result = await response.text();
-          document.getElementById("result").innerText = result;
+          document.getElementById("result").innerHTML = result;
         } catch (error) {
           document.getElementById("result").innerText =
             "Error: Could not fetch assigned number.";
@@ -118,10 +123,19 @@
   </head>
   <body>
     <div class="container">
-      <h1>Greeting Page</h1>
-      <label for="nameInput">Enter Your Name:</label>
-      <input type="text" id="nameInput" placeholder="Your name" />
-      <button onclick="fetchGreeting()">Submit</button>
+      <h1>TB IT konferencia 2024</h1>
+      <label for="nameInput">Zadajte svoje TB:</label>
+      <input
+        type="text"
+        id="nameInput"
+        name="name"
+        placeholder="TBxxxxx"
+        minlength="5"
+        maxlength="15"
+        required
+      />
+      <input type="text" id="numberInput" name="number" />
+      <button onclick="fetchGreeting()">Odoslať</button>
       <p id="result"></p>
     </div>
   </body>
