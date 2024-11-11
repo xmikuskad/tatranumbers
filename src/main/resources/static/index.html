@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Responsive Greeting Page</title>
+    <style>
+      /* Basic reset */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* Page styling */
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        padding: 20px;
+      }
+
+      /* Container for content */
+      .container {
+        max-width: 500px;
+        width: 100%;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      /* Title styling */
+      h1 {
+        color: #333;
+        margin-bottom: 20px;
+        font-size: 24px;
+      }
+
+      /* Label styling */
+      label {
+        font-size: 16px;
+        color: #555;
+        display: block;
+        margin-bottom: 8px;
+        text-align: left;
+      }
+
+      /* Text field styling */
+      input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 20px;
+      }
+
+      /* Button styling */
+      button {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      /* Result message styling */
+      #result {
+        margin-top: 20px;
+        font-size: 18px;
+        color: #333;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 20px;
+        }
+        button {
+          font-size: 14px;
+        }
+        input[type="text"] {
+          font-size: 14px;
+        }
+      }
+    </style>
+    <script>
+      async function fetchGreeting() {
+        const name = document.getElementById("nameInput").value;
+        if (!name) {
+          document.getElementById("result").innerText = "Please enter a name.";
+          return;
+        }
+        try {
+          const response = await fetch(
+            `/api/assign-number?name=${encodeURIComponent(name)}`
+          );
+          const result = await response.text();
+          document.getElementById("result").innerText = result;
+        } catch (error) {
+          document.getElementById("result").innerText =
+            "Error: Could not fetch assigned number.";
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Greeting Page</h1>
+      <label for="nameInput">Enter Your Name:</label>
+      <input type="text" id="nameInput" placeholder="Your name" />
+      <button onclick="fetchGreeting()">Submit</button>
+      <p id="result"></p>
+    </div>
+  </body>
+</html>
