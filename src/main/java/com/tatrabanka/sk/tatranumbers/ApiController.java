@@ -16,7 +16,7 @@ public class ApiController {
             return "Bot detected!";
         }
 
-        if("DominikMikuška".equals(name)) {
+        if("DominikMikuška".equals(name) || "Asenetka".equals(name)) {
             numberAssignmentService.resetNumber();
             return "Čísla resetnuté.";
         }
