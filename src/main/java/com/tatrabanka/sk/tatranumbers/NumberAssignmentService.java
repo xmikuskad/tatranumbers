@@ -36,6 +36,7 @@ public class NumberAssignmentService {
 
     public void resetNumber() {
         currentIndex.set(0);
+        userNumberMap.clear();
     }
     
 
