@@ -105,18 +105,20 @@
       async function fetchGreeting() {
         const name = document.getElementById("nameInput").value;
         if (!name) {
-          document.getElementById("result").innerText = "Please enter a name.";
+          document.getElementById("result").innerText = "Prosim zadajte svoje TB";
           return;
         }
+
+        const number = document.getElementById("numberInput").value;
         try {
           const response = await fetch(
-            `/api/assign-number?name=${encodeURIComponent(name)}`
+            `/api/assign-number?name=${encodeURIComponent(name)}&number=${encodeURIComponent(number)}`
           );
           const result = await response.text();
           document.getElementById("result").innerHTML = result;
         } catch (error) {
           document.getElementById("result").innerText =
-            "Error: Could not fetch assigned number.";
+            "Error: Could not fetch assigned number. Try again.";
         }
       }
     </script>

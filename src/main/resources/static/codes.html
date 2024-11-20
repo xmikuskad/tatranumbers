@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manažment miest</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #444;
+        }
+
+        form {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        #codes {
+            width: 100%;
+            height: 60vh;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            font-family: monospace;
+            font-size: 14px;
+            resize: both;
+            overflow: auto;
+            margin-bottom: 15px;
+        }
+
+        #password {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        #submitBtn {
+            width: 100%;
+            max-width: 300px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #submitBtn:hover {
+            background-color: #0056b3;
+        }
+
+        #submitBtn:active {
+            background-color: #003f7f;
+        }
+
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            #codes {
+                height: 60vh;
+                font-size: 12px;
+            }
+
+            #submitBtn {
+                width: 100%;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            #codes {
+                height: 60vh;
+                font-size: 12px;
+            }
+
+            #submitBtn {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Manažment miest</h1>
+    <form id="codeForm">
+        <label for="codes">Miesta:</label>
+        <textarea id="codes" placeholder="Loading codes..."></textarea>
+
+        <label for="password">Poznámka:</label>
+        <input id="password" required />
+
+        <button id="submitBtn" type="button">Uložiť</button>
+    </form>
+
+    <script>
+        // Load initial codes from server
+        async function loadCodes() {
+            const response = await fetch('/api/codes');
+            if (response.ok) {
+                const codes = await response.json();
+                document.getElementById('codes').value = codes.join('\n');
+            } else {
+                alert('Failed to load codes');
+            }
+        }
+
+        // Submit updated codes and password to server
+        async function submitCodes() {
+            const codes = document.getElementById('codes').value;
+            const password = document.getElementById('password').value;
+
+            if (!password) {
+                alert('Poznámka je povinná');
+                return;
+            }
+
+            const response = await fetch('/api/submit-codes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ codes, password }),
+            });
+
+            if (response.ok) {
+                const message = await response.text();
+                alert(message);
+            } else if(response.status == 401) {
+                alert('Skontrolujte poznámku');
+            }   else{
+                alert('Failed to submit codes');
+            }
+        }
+
+        // Attach event handlers
+        document.getElementById('submitBtn').addEventListener('click', submitCodes);
+
+        // Load initial codes on page load
+        window.onload = loadCodes;
+    </script>
+</b

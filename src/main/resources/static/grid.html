@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vizualizácia miest</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 20px;
+            margin: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Wrapper for all grids */
+        .grid-container-wrapper {
+            display: flex;
+            justify-content: space-evenly;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        /* Individual grid container */
+        .grid-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 900px; /* Limit the max width to avoid excessively wide grids */
+            margin-bottom: 30px; /* Space below each grid */
+        }
+
+        /* Grid name (section label) */
+        .grid-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px; /* Space between section name and the grid */
+        }
+
+        /* Grid container */
+        .grid-container {
+            display: grid;
+            gap: 1px;
+            position: relative;
+            width: 100%;
+            min-height: 400px; /* Minimum height for the grid */
+        }
+
+        /* Grid cell styling */
+        .grid-cell {
+            background-color: #e0e0e0;
+            border: 1px solid #ccc;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .grid-cell.highlight {
+            background-color: #FF5733; /* Highlighted cells */
+        }
+
+        /* Default grid size - will be dynamic */
+        .grid-container {
+            grid-template-columns: repeat(19, 1fr); /* Initially 19 columns for B109 */
+            grid-template-rows: repeat(15, 1fr); /* Initially 15 rows */
+            width: 100%; /* Make the grid responsive */
+        }
+
+        /* Dynamic grid size calculation using viewport units */
+        .grid-container {
+            width: 100%;
+            height: auto;
+            grid-template-columns: repeat(19, minmax(80px, 6vw)); /* Cell width is dynamic based on viewport */
+            grid-template-rows: repeat(15, minmax(80px, 6vh)); /* Cell height is dynamic based on viewport */
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 1024px) {
+            .grid-container {
+                grid-template-columns: repeat(15, minmax(80px, 8vw)); /* Slightly bigger cells */
+                grid-template-rows: repeat(15, minmax(80px, 8vh)); /* Adjust cell size dynamically */
+                min-height: 500px; /* Increase minimum height for better layout */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: repeat(10, minmax(80px, 10vw)); /* Reduce columns, bigger cells */
+                grid-template-rows: repeat(15, minmax(80px, 10vh)); /* Keep cell size flexible */
+                min-height: 350px; /* Reduce height on tablets */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grid-container {
+                grid-template-columns: repeat(6, minmax(80px, 12vw)); /* Reduce columns for small screens */
+                grid-template-rows: repeat(15, minmax(80px, 10vh)); /* Adjust cell size for smaller screens */
+                min-height: 300px; /* Lower height for small mobile screens */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Vizualizácia miest</h1>
+
+    <!-- Wrapper for displaying grids -->
+    <div class="grid-container-wrapper">
+
+        <!-- B109 Grid -->
+        <div class="grid-wrapper">
+            <div class="grid-name">B109</div>
+            <div class="grid-container" id="grid-b109"></div>
+        </div>
+
+        <!-- B108 Grid -->
+        <div class="grid-wrapper">
+            <div class="grid-name">B108</div>
+            <div class="grid-container" id="grid-b108"></div>
+        </div>
+
+        <!-- B107 Grid -->
+        <div class="grid-wrapper">
+            <div class="grid-name">B107</div>
+            <div class="grid-container" id="grid-b107"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Fetch data from the server
+        async function loadGridData() {
+            const response = await fetch('/api/grid');
+            if (response.ok) {
+                const data = await response.json();
+                renderGrid("B109", data.B109, 19, 15); // 19 columns, 15 rows for B109
+                renderGrid("B108", data.B108, 30, 15); // 30 columns, 15 rows for B108
+                renderGrid("B107", data.B107, 30, 15); // 30 columns, 15 rows for B107
+            } else {
+                console.error("Failed to load grid data.");
+            }
+        }
+
+        // Render the grid
+        function renderGrid(gridName, gridData, numColumns, numRows) {
+            const gridContainer = document.getElementById(`grid-${gridName.toLowerCase()}`);
+            gridContainer.innerHTML = ''; // Clear the existing grid
+
+            // Set grid structure based on columns and rows
+            gridContainer.style.gridTemplateColumns = `repeat(${numColumns}, 1fr)`;
+            gridContainer.style.gridTemplateRows = `repeat(${numRows}, 1fr)`;
+
+            // Generate the grid cells
+            for (let y = 1; y <= numRows; y++) {
+                for (let x = numColumns; x >= 1; x--) { // Reverse X-axis (start from numColumns down to 1)
+                    const cell = document.createElement('div');
+                    cell.classList.add('grid-cell');
+
+                    // Adjust Y for bottom-up rendering (reverse Y-axis)
+                    const reversedY = numRows - y + 1; // Invert Y axis for bottom-to-top rendering
+                    const cellId = `${gridName}-rad${reversedY}-sedadlo${x}`;
+
+                    // If the cell is in the data, highlight it
+                    if (gridData.includes(cellId)) {
+                        cell.classList.add('highlight');
+                    }
+
+                    gridContainer.appendChild(cell);
+                }
+            }
+        }
+
+        // Load the grid data when the page is loaded
+        window.onload = loadGridData;
+    </script>
+</body>
+</html>
